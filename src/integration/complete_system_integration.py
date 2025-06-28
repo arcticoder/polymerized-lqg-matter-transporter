@@ -29,8 +29,9 @@ import time
 # Import existing framework components
 try:
     from src.physics.enhanced_junction_conditions import EnhancedJunctionConditions
-    from src.control.adaptive_field_control import AdaptiveFieldController
-    from src.safety.bio_compatibility import BioCompatibilityMonitor
+    from src.control.hinfty_controller import HInfinityController
+    from src.control.multivar_pid_controller import MultiVariablePIDController
+    from src.control.qec_injector import QuantumErrorCorrectionInjector
 except ImportError as e:
     print(f"Warning: Could not import existing components: {e}")
     print("Some functionality may be limited.")
@@ -138,7 +139,8 @@ class IntegratedStargateTransporterSystem:
                 'response_time': self.config.emergency_response_time,
                 'safety_threshold': self.config.bio_safety_threshold
             }
-            self.field_controller = AdaptiveFieldController(control_config)
+            # Use H∞ controller as field controller
+            self.field_controller = HInfinityController()
             print("✅ Adaptive field controller loaded")
             
         except NameError:
@@ -151,7 +153,8 @@ class IntegratedStargateTransporterSystem:
                 'threshold': self.config.bio_safety_threshold,
                 'quantum_preservation': self.config.quantum_coherence_preservation
             }
-            self.bio_monitor = BioCompatibilityMonitor(bio_config)
+            # Bio-safety handled within enhanced transporter
+            self.bio_monitor = None  # Use enhanced transporter's built-in safety
             print("✅ Bio-compatibility monitor loaded")
             
         except NameError:

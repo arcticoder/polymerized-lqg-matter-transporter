@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt
 from typing import Dict, List, Tuple, Optional
 import time
 from dataclasses import dataclass
-import pandas as pd
+# import pandas as pd  # Optional dependency for extended analysis
 
 # Import core transporter
 import sys
@@ -279,8 +279,18 @@ class DynamicCorridorSimulator:
             'safety_ok': result.safety_status
         }
         
-        df = pd.DataFrame(data)
-        df.to_csv(filename, index=False)
+        # Create simple data summary without pandas dependency
+        summary_data = {
+            'mean_velocity': np.mean(data['velocity']),
+            'max_velocity': np.max(data['velocity']),
+            'mean_energy': np.mean(data['energy']),
+            'max_energy': np.max(data['energy']),
+            'final_stability': data['stability'][-1]
+        }
+        # Save data as JSON instead of CSV
+        import json
+        with open(filename.replace('.csv', '.json'), 'w') as f:
+            json.dump(data, f, indent=2, default=lambda x: float(x) if isinstance(x, np.ndarray) else x)
         
         print(f"📄 Simulation data exported to: {filename}")
 

@@ -17,6 +17,10 @@
 			"path": "../unified-lqg-qft"
 		},
 		{
+			"name": "lorentz-violation-pipeline",
+			"path": "../lorentz-violation-pipeline"
+		},
+		{
 			"name": "lqg-anec-framework",
 			"path": "../lqg-anec-framework"
 		},
