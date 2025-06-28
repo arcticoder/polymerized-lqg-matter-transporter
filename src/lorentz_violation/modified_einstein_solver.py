@@ -31,10 +31,10 @@ from dataclasses import dataclass
 import warnings
 
 # Import core transporter framework
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-from src.core.enhanced_stargate_transporter import EnhancedStargateTransporter
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..core.enhanced_stargate_transporter import EnhancedStargateTransporter
 
 @dataclass
 class SMEParameters:
@@ -79,7 +79,7 @@ class SMEEinsteinSolver:
     through Lorentz violation corrections.
     """
     
-    def __init__(self, transporter: EnhancedStargateTransporter, sme_params: SMEParameters):
+    def __init__(self, transporter: 'EnhancedStargateTransporter', sme_params: SMEParameters):
         """
         Initialize SME-enhanced Einstein solver.
         
@@ -278,8 +278,8 @@ def create_sme_solver_demo():
     print("⚡ SME-Enhanced Einstein Solver Demonstration")
     print("=" * 50)
     
-    # Import transporter
-    from src.core.enhanced_stargate_transporter import EnhancedStargateTransporter, EnhancedTransporterConfig
+    # Import transporter (only when needed to avoid circular imports)
+    from ..core.enhanced_stargate_transporter import EnhancedStargateTransporter, EnhancedTransporterConfig
     
     # Create transporter
     config = EnhancedTransporterConfig(

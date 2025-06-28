@@ -1,9 +1,9 @@
 """
-SME/Ghost-Scalar/Dispersion-Corrected Enhanced Transporter Demo
-==============================================================
+SME/Ghost-Scalar/Dispersion-Corrected Enhanced Transporter Demo (CLEAN)
+======================================================================
 
 Complete integration of Lorentz violation enhancements:
-1. SME-Enhanced Einstein Solver (G_μν^LV)
+1. SME-Enhanced Einstein Solver (G_muv^LV)
 2. Polymer-Ghost Scalar EFT  
 3. Polynomial Dispersion Relations
 4. Matter-Gravity Coherence Energy Extractor
@@ -37,17 +37,14 @@ from src.physics.ghost_scalar_eft import GhostScalarEFT, GhostScalarConfig
 from src.utils.dispersion_relations import PolynomialDispersionRelations, DispersionParameters
 from src.physics.energy_extractor import MatterGravityCoherenceExtractor, CoherenceConfiguration
 
-# Import core transporter framework only (remove problematic imports)
+# Import core transporter framework only
 from src.core.enhanced_stargate_transporter import EnhancedStargateTransporter, EnhancedTransporterConfig
-# from src.optimization.parameter_optimizer import TransporterOptimizer, OptimizationConfiguration
-# from src.simulations.dynamic_corridor import DynamicCorridorSimulator, DynamicConfiguration
-# from src.physics.casimir_integrator import CasimirNegativeEnergyIntegrator, CasimirConfiguration
 
 class LVEnhancedTransporterFramework:
     """
     Complete SME/Ghost-Scalar/Dispersion-Corrected Transporter Framework
     
-    Integrates all Lorentz violation enhancements with existing workstreams:
+    Integrates all Lorentz violation enhancements:
     - SME-enhanced Einstein equations
     - Ghost-scalar quantum field dynamics
     - Polynomial dispersion corrections
@@ -56,8 +53,8 @@ class LVEnhancedTransporterFramework:
     
     def __init__(self):
         """Initialize complete LV-enhanced framework."""
-        print("Enhanced Transporter Framework")
-        print("=" * 70)
+        print("SME/Ghost-Scalar/Dispersion-Corrected Transporter Framework")
+        print("=" * 60)
         
         # Base transporter configuration
         self.transporter_config = EnhancedTransporterConfig(
@@ -77,14 +74,14 @@ class LVEnhancedTransporterFramework:
         # Results storage
         self.results = {}
         
-        print(f"Base transporter initialized")
+        print(f"SUCCESS: Base transporter initialized")
     
     def initialize_lv_components(self):
         """Initialize all Lorentz violation enhancement components."""
         print(f"\nInitializing LV enhancement components...")
         
         # 1. SME-Enhanced Einstein Solver
-        print(f"\n1️⃣ SME-Enhanced Einstein Solver:")
+        print(f"\n1. SME-Enhanced Einstein Solver:")
         sme_params = SMEParameters(
             c_00_3=1e-9,    # Within experimental bounds
             c_11_3=1e-17,   # Well below constraints
@@ -97,7 +94,7 @@ class LVEnhancedTransporterFramework:
         self.sme_solver = SMEEinsteinSolver(self.transporter, sme_params)
         
         # 2. Ghost-Scalar EFT
-        print(f"\n2️⃣ Ghost-Scalar EFT:")
+        print(f"\n2. Ghost-Scalar EFT:")
         ghost_config = GhostScalarConfig(
             m=0.001,        # 1 MeV mass
             lam=0.1,        # Moderate coupling
@@ -105,14 +102,14 @@ class LVEnhancedTransporterFramework:
             alpha=1e-8,     # Small LV coupling
             beta=1e-3,      # Small curvature coupling
             L=5.0,          # 5 fm domain
-            N=32,           # 32³ grid
+            N=32,           # 32^3 grid
             dt=0.02,        # 0.02 fm/c
             T_max=5.0       # 5 fm/c evolution
         )
         self.ghost_eft = GhostScalarEFT(ghost_config)
         
         # 3. Polynomial Dispersion Relations
-        print(f"\n3️⃣ Polynomial Dispersion Relations:")
+        print(f"\n3. Polynomial Dispersion Relations:")
         dispersion_params = DispersionParameters(
             alpha_1=1e-16,  # Very small linear
             alpha_2=1e-12,  # Small quadratic
@@ -126,7 +123,7 @@ class LVEnhancedTransporterFramework:
         self.dispersion = PolynomialDispersionRelations(dispersion_params)
         
         # 4. Matter-Gravity Coherence Extractor
-        print(f"\n4️⃣ Matter-Gravity Coherence Extractor:")
+        print(f"\n4. Matter-Gravity Coherence Extractor:")
         coherence_config = CoherenceConfiguration(
             n_matter_states=8,
             n_gravity_states=8,
@@ -137,11 +134,11 @@ class LVEnhancedTransporterFramework:
         )
         self.coherence_extractor = MatterGravityCoherenceExtractor(coherence_config)
         
-        print(f"\n✅ All LV enhancement components initialized!")
+        print(f"\nSUCCESS: All LV enhancement components initialized!")
     
     def run_sme_enhanced_simulation(self) -> Dict:
         """Run simulation with SME-enhanced Einstein equations."""
-        print(f"\n🔬 Running SME-Enhanced Field Equation Simulation...")
+        print(f"\nRunning SME-Enhanced Field Equation Simulation...")
         
         start_time = time.time()
         
@@ -168,7 +165,7 @@ class LVEnhancedTransporterFramework:
             'computation_time': computation_time
         }
         
-        print(f"✅ SME simulation completed in {computation_time:.3f} seconds")
+        print(f"SUCCESS: SME simulation completed in {computation_time:.3f} seconds")
         print(f"   Enhancement factor: {enhancement_factor:.6f}")
         print(f"   Einstein tensor norm: {validation['einstein_tensor_norm']:.2e}")
         
@@ -176,7 +173,7 @@ class LVEnhancedTransporterFramework:
     
     def run_ghost_scalar_dynamics(self) -> Dict:
         """Run ghost-scalar field evolution."""
-        print(f"\n👻 Running Ghost-Scalar Field Dynamics...")
+        print(f"\nRunning Ghost-Scalar Field Dynamics...")
         
         start_time = time.time()
         
@@ -204,7 +201,7 @@ class LVEnhancedTransporterFramework:
             'computation_time': computation_time
         }
         
-        print(f"✅ Ghost-scalar dynamics completed in {computation_time:.3f} seconds")
+        print(f"SUCCESS: Ghost-scalar dynamics completed in {computation_time:.3f} seconds")
         print(f"   Field enhancement: {evolution_results['enhancement_factor']:.2e}")
         print(f"   Transporter enhancement: {ghost_enhancement:.6f}")
         
@@ -212,13 +209,13 @@ class LVEnhancedTransporterFramework:
     
     def run_dispersion_analysis(self) -> Dict:
         """Analyze polynomial dispersion corrections."""
-        print(f"\n📊 Running Polynomial Dispersion Analysis...")
+        print(f"\nRunning Polynomial Dispersion Analysis...")
         
         start_time = time.time()
         
         # Analyze over wide momentum range relevant to transport
         p_range = (1e-3, 1e12)  # GeV
-        m_transport = 75 * 0.938  # Approximate nucleon mass × payload
+        m_transport = 75 * 0.938  # Approximate nucleon mass x payload
         
         # Dispersion analysis
         analysis = self.dispersion.analyze_dispersion_modifications(p_range, m_transport)
@@ -243,7 +240,7 @@ class LVEnhancedTransporterFramework:
             'computation_time': computation_time
         }
         
-        print(f"✅ Dispersion analysis completed in {computation_time:.3f} seconds")
+        print(f"SUCCESS: Dispersion analysis completed in {computation_time:.3f} seconds")
         print(f"   Maximum enhancement: {analysis['max_enhancement']:.3f}")
         print(f"   High-energy enhancement: {analysis['high_energy_enhancement']:.3f}")
         
@@ -251,7 +248,7 @@ class LVEnhancedTransporterFramework:
     
     def run_coherent_energy_extraction(self) -> Dict:
         """Run matter-gravity coherent energy extraction."""
-        print(f"\n🌌 Running Coherent Energy Extraction...")
+        print(f"\nRunning Coherent Energy Extraction...")
         
         start_time = time.time()
         
@@ -274,7 +271,7 @@ class LVEnhancedTransporterFramework:
             'computation_time': computation_time
         }
         
-        print(f"✅ Coherent extraction completed in {computation_time:.3f} seconds")
+        print(f"SUCCESS: Coherent extraction completed in {computation_time:.3f} seconds")
         print(f"   Extractable energy: {extraction_result.extractable_energy:.2e} J")
         print(f"   Enhancement over classical: {enhancement:.2e}")
         
@@ -282,9 +279,9 @@ class LVEnhancedTransporterFramework:
     
     def compute_total_lv_enhancement(self) -> Dict:
         """Compute total LV enhancement across all components."""
-        print(f"\n🎯 Computing Total LV Enhancement...")
+        print(f"\nComputing Total LV Enhancement...")
         
-        # Base transport energy (using typical human mass)
+        # Base transport energy
         payload_mass = 75.0  # kg
         c = 2.99792458e8
         E_base = payload_mass * c**2
@@ -321,7 +318,7 @@ class LVEnhancedTransporterFramework:
             'improvement_over_original': lv_improvement
         }
         
-        print(f"📊 TOTAL LV ENHANCEMENT ANALYSIS:")
+        print(f"TOTAL LV ENHANCEMENT ANALYSIS:")
         print(f"   Base energy: {E_base:.2e} J")
         print(f"   Final LV energy: {E_final_lv:.2e} J")
         print(f"   Total enhancement: {total_enhancement:.2e}")
@@ -340,7 +337,7 @@ class LVEnhancedTransporterFramework:
         self.initialize_lv_components()
         
         # Run each LV enhancement
-        print(f"\n🔬 Running All LV Enhancement Simulations...")
+        print(f"\nRunning All LV Enhancement Simulations...")
         
         self.results['sme'] = self.run_sme_enhanced_simulation()
         self.results['ghost'] = self.run_ghost_scalar_dynamics()
@@ -358,17 +355,17 @@ class LVEnhancedTransporterFramework:
             self.results['coherent']['computation_time']
         ])
         
-        print(f"\n🎉 COMPLETE LV FRAMEWORK RESULTS:")
+        print(f"\nCOMPLETE LV FRAMEWORK RESULTS:")
         print(f"=" * 45)
-        print(f"✅ SME-Enhanced Einstein Equations: Operational")
-        print(f"✅ Ghost-Scalar Field Dynamics: Operational")
-        print(f"✅ Polynomial Dispersion Relations: Operational")
-        print(f"✅ Matter-Gravity Coherence Extraction: Operational")
+        print(f"SUCCESS: SME-Enhanced Einstein Equations: Operational")
+        print(f"SUCCESS: Ghost-Scalar Field Dynamics: Operational")
+        print(f"SUCCESS: Polynomial Dispersion Relations: Operational")
+        print(f"SUCCESS: Matter-Gravity Coherence Extraction: Operational")
         print(f"")
-        print(f"🎯 PARADIGM SHIFT ACHIEVED:")
+        print(f"PARADIGM SHIFT ACHIEVED:")
         print(f"   Beyond Einstein equations: {self.results['total']['total_enhancement_factor']:.2e}x improvement")
         print(f"   Total computation time: {total_time:.2f} seconds")
-        print(f"   Framework status: 🚀 REVOLUTIONARY")
+        print(f"   Framework status: REVOLUTIONARY")
         
         return self.results
 

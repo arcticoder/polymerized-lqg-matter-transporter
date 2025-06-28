@@ -1,5 +1,5 @@
 """
-Quick validation test for LV enhancement components.
+Clean validation test for LV enhancement components.
 """
 
 import sys
