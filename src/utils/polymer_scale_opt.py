@@ -135,19 +135,25 @@ class OptimalPolymerScaleResummation:
         @jit
         def polymer_sinc_correction(argument):
             """
-            Polymer sinc correction factor.
+            CORRECTED Polymer sinc correction factor.
             
-            sinc(x) = sin(x)/x with series expansion for small x
+            sinc(x) = sin(πx)/(πx) with series expansion for small x
+            
+            This fixes the mathematical error in the original formulation.
+            Correct LQG polymer function requires the π factor.
             """
+            # CORRECTED: Use π in sinc function for LQG consistency
+            pi_argument = jnp.pi * argument
+            
             # Use series expansion for small arguments (better numerical stability)
-            small_arg_condition = jnp.abs(argument) < 0.1
+            small_arg_condition = jnp.abs(pi_argument) < 0.1
             
-            # Series expansion: sinc(x) = 1 - x²/6 + x⁴/120 - x⁶/5040 + ...
-            series_expansion = (1.0 - argument**2/6.0 + argument**4/120.0 - 
-                              argument**6/5040.0 + argument**8/362880.0)
+            # Series expansion: sinc(πx) = 1 - (πx)²/6 + (πx)⁴/120 - (πx)⁶/5040 + ...
+            series_expansion = (1.0 - pi_argument**2/6.0 + pi_argument**4/120.0 - 
+                              pi_argument**6/5040.0 + pi_argument**8/362880.0)
             
-            # Direct calculation for larger arguments
-            direct_calculation = jnp.sinc(argument / jnp.pi)
+            # Direct calculation for larger arguments  
+            direct_calculation = jnp.sinc(argument)  # JAX sinc already includes π
             
             result = jnp.where(small_arg_condition, series_expansion, direct_calculation)
             

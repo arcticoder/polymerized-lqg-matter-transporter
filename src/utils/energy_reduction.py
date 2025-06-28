@@ -40,8 +40,12 @@ class EnergyReductionConfig:
     
     # Validated reduction factors
     geometric_reduction_target: float = 1.69e5     # Validated geometric reduction
-    backreaction_control_factor: float = 1.9443   # Validated backreaction factor
+    backreaction_control_factor: float = 1.9443254780147017  # EXACT value from qi_bound_modification.tex
     polymer_efficiency_target: float = 1e3        # Polymer enhancement target
+    
+    # Enhanced total reduction incorporating VdB-Nat geometric baseline
+    vdb_nat_geometric_baseline: float = 1e5       # Van den Broeck-Natário 10⁵× baseline
+    total_reduction_enhanced: float = 1.69e5 * 1e5  # 1.69×10¹⁰ with geometric baseline
     
     # Energy baseline parameters
     alcubierre_energy_estimate: float = 1e64      # Alcubierre energy scale (J)
