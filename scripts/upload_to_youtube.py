@@ -76,7 +76,7 @@ class YouTubeUploader:
         self.service = build('youtube', 'v3', credentials=creds)
         return True
     
-    def upload_video(self, video_path, title, description, tags=None, privacy_status='unlisted'):
+    def upload_video(self, video_path, title, description, tags=None, privacy_status='public'):
         """Upload video to YouTube with metadata"""
         
         if not os.path.exists(video_path):
@@ -236,7 +236,7 @@ def main():
     parser = argparse.ArgumentParser(description='Upload Enhanced Stargate Transporter video to YouTube')
     parser.add_argument('--video', required=True, help='Path to video file')
     parser.add_argument('--credentials', help='Path to Google API credentials file')
-    parser.add_argument('--privacy', default='unlisted', choices=['private', 'unlisted', 'public'],
+    parser.add_argument('--privacy', default='public', choices=['private', 'unlisted', 'public'],
                       help='Privacy status for uploaded video')
     
     args = parser.parse_args()
