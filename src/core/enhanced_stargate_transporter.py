@@ -40,7 +40,8 @@ class EnhancedTransporterConfig:
     
     # Transport parameters
     v_conveyor: float = 0.0        # Conveyor velocity (0 = static corridor)
-    corridor_mode: str = "static"  # "static" or "moving"
+    v_conveyor_max: float = 1e6    # m/s peak conveyor velocity for dynamic mode
+    corridor_mode: str = "static"  # "static", "moving", or "sinusoidal"
     
     # Energy optimization (from survey findings)
     use_van_den_broeck: bool = True        # Apply VdB volume reduction
@@ -143,6 +144,33 @@ class EnhancedStargateTransporter:
             
         return g_rho * g_z
     
+    def v_s(self, t: float) -> float:
+        """
+        Time-dependent conveyor velocity for dynamic corridor mode.
+        
+        Implements multiple velocity profiles:
+        - static: v_s(t) = v_conveyor (constant)
+        - moving: v_s(t) = v_conveyor (constant non-zero)
+        - sinusoidal: v_s(t) = V_max * sin(πt/T_period) (accelerate-decelerate)
+        
+        Args:
+            t: Time coordinate
+            
+        Returns:
+            Conveyor velocity at time t
+        """
+        if self.config.corridor_mode == "static":
+            return 0.0
+        elif self.config.corridor_mode == "moving":
+            return self.config.v_conveyor
+        elif self.config.corridor_mode == "sinusoidal":
+            V_max = self.config.v_conveyor_max
+            T_period = self.config.temporal_scale
+            return V_max * np.sin(np.pi * t / T_period)
+        else:
+            # Default to static
+            return 0.0
+    
     def enhanced_metric_tensor(self, t: float, rho: float, phi: float, z: float) -> jnp.ndarray:
         """
         Enhanced cylindrical warp-tube metric with Van den Broeck geometry.
@@ -157,13 +185,13 @@ class EnhancedStargateTransporter:
             4×4 metric tensor g_μν
         """
         f = self.van_den_broeck_shape_function(rho, z)
-        v_s = self.config.v_conveyor
+        vs_t = self.v_s(t)  # Time-dependent velocity
         
-        # Metric components
-        g_tt = -(self.c**2) + (v_s * f)**2
+        # Metric components with dynamic conveyor
+        g_tt = -(self.c**2) + (vs_t * f)**2
         g_trho = 0.0
         g_tphi = 0.0
-        g_tz = -v_s * f
+        g_tz = -vs_t * f
         
         g_rhorho = 1.0
         g_rhophi = 0.0
@@ -184,15 +212,16 @@ class EnhancedStargateTransporter:
         
         return g
     
-    def stress_energy_density(self, rho: float, z: float) -> float:
+    def stress_energy_density(self, rho: float, z: float, t: float = 0.0) -> float:
         """
-        Enhanced stress-energy density with all reduction factors.
+        Enhanced stress-energy density with all reduction factors and time dependence.
         
         Implements improved formula:
-        ρ(ρ,z) = -c²/(8πG) × v_s² × [|∇f|² + polymer_corrections] × reduction_factors
+        ρ(ρ,z,t) = -c²/(8πG) × v_s(t)² × [|∇f|² + polymer_corrections] × reduction_factors
         
         Args:
             rho, z: Spatial coordinates
+            t: Time coordinate (for dynamic corridors)
             
         Returns:
             Energy density (negative for exotic matter)
@@ -218,9 +247,9 @@ class EnhancedStargateTransporter:
         else:
             polymer_correction = 1.0 + self.config.alpha_polymer
         
-        # Base stress-energy density
-        v_s = self.config.v_conveyor
-        rho_base = -(self.c**2 / (8 * np.pi * self.G)) * v_s**2 * grad_f_squared
+        # Base stress-energy density with time-dependent velocity
+        vs_t = self.v_s(t)  # Dynamic velocity
+        rho_base = -(self.c**2 / (8 * np.pi * self.G)) * vs_t**2 * grad_f_squared
         
         # Apply all enhancement factors
         total_reduction = self.total_energy_reduction()
@@ -407,17 +436,41 @@ class EnhancedStargateTransporter:
         # Multi-bubble superposition
         E_after_multi_bubble = E_after_polymer * self.R_multi_bubble
         
+        # Casimir negative energy generation (optional)
+        try:
+            from ..physics.negative_energy import CasimirConfig, CasimirGenerator
+            
+            # Create Casimir generator for this calculation
+            casimir_config = CasimirConfig(
+                plate_separation=1e-6,
+                num_plates=100,
+                enable_dynamic_casimir=(self.config.corridor_mode != "static")
+            )
+            casimir_gen = CasimirGenerator(casimir_config)
+            
+            # Calculate Casimir reduction factor
+            neck_volume = np.pi * self.R_ext**2 * self.L
+            R_casimir = casimir_gen.casimir_reduction_factor(neck_volume, E_after_multi_bubble)
+            E_after_casimir = E_after_multi_bubble * R_casimir
+            
+        except ImportError:
+            # Fallback if Casimir module not available
+            R_casimir = 1.0
+            E_after_casimir = E_after_multi_bubble
+        
         # Temporal smearing reduction
         temporal_factor = self.temporal_smearing_energy_reduction(transport_time)
-        E_final = E_after_multi_bubble * temporal_factor
+        E_final = E_after_casimir * temporal_factor
         
         return {
             'E_base_classical': E_base_classical,
             'E_after_geometric': E_after_geometric,
             'E_after_polymer': E_after_polymer, 
             'E_after_multi_bubble': E_after_multi_bubble,
+            'E_after_casimir': E_after_casimir,
             'E_final': E_final,
             'total_reduction_factor': E_base_classical / E_final if E_final > 0 else np.inf,
+            'casimir_reduction': R_casimir,
             'temporal_reduction': temporal_factor,
             'transport_time': transport_time
         }
@@ -512,6 +565,172 @@ class EnhancedStargateTransporter:
         print(f"  Quantum coherent: {'✅' if safety_status['quantum_coherent'] else '❌'}")
         
         return results
+
+    def compute_complete_field_configuration(self, t: float = 0.0, 
+                                           resolution: int = 50) -> Dict:
+        """
+        Compute complete field configuration at given time for dynamic analysis.
+        
+        Args:
+            t: Time coordinate
+            resolution: Spatial grid resolution
+            
+        Returns:
+            Complete field configuration dictionary
+        """
+        print(f"\n🌌 Computing Field Configuration at t = {t:.3f}s")
+        print(f"   Corridor mode: {self.config.corridor_mode}")
+        print(f"   Conveyor velocity: {self.v_s(t):.2e} m/s")
+        print("-" * 50)
+        
+        # Create spatial grid
+        rho_max = 1.2 * self.R_int
+        z_max = 1.2 * self.L
+        
+        rho_grid = np.linspace(0, rho_max, resolution)
+        z_grid = np.linspace(-0.2 * self.L, z_max, resolution)
+        
+        RHO, Z = np.meshgrid(rho_grid, z_grid)
+        
+        # Compute field quantities
+        shape_function = np.zeros_like(RHO)
+        stress_energy = np.zeros_like(RHO)
+        metric_tt = np.zeros_like(RHO)
+        metric_tz = np.zeros_like(RHO)
+        
+        for i in range(resolution):
+            for j in range(resolution):
+                rho_ij = RHO[i, j]
+                z_ij = Z[i, j]
+                
+                # Shape function
+                shape_function[i, j] = self.van_den_broeck_shape_function(rho_ij, z_ij)
+                
+                # Stress-energy density
+                stress_energy[i, j] = self.stress_energy_density(rho_ij, z_ij, t)
+                
+                # Metric components
+                metric_tensor = self.enhanced_metric_tensor(t, rho_ij, 0.0, z_ij)
+                metric_tt[i, j] = metric_tensor[0, 0]
+                metric_tz[i, j] = metric_tensor[0, 3]
+        
+        # Compute field statistics
+        vs_current = self.v_s(t)
+        active_region_mask = shape_function > 0.1
+        
+        field_stats = {
+            'time': t,
+            'conveyor_velocity': vs_current,
+            'max_shape_function': np.max(shape_function),
+            'min_stress_energy': np.min(stress_energy),
+            'max_stress_energy': np.max(stress_energy),
+            'active_volume_fraction': np.sum(active_region_mask) / (resolution**2),
+            'energy_density_std': np.std(stress_energy[active_region_mask]) if np.any(active_region_mask) else 0.0
+        }
+        
+        print(f"Field Statistics:")
+        print(f"  Conveyor velocity: {vs_current:.2e} m/s")
+        print(f"  Active volume: {field_stats['active_volume_fraction']*100:.1f}%")
+        print(f"  Energy density range: [{field_stats['min_stress_energy']:.2e}, {field_stats['max_stress_energy']:.2e}] J/m³")
+        
+        return {
+            'time': t,
+            'spatial_grid': {'rho': rho_grid, 'z': z_grid, 'RHO': RHO, 'Z': Z},
+            'fields': {
+                'shape_function': shape_function,
+                'stress_energy_density': stress_energy,
+                'metric_tt': metric_tt,
+                'metric_tz': metric_tz
+            },
+            'statistics': field_stats
+        }
+    
+    def simulate_dynamic_transport(self, duration: float = 10.0, 
+                                 time_steps: int = 100) -> Dict:
+        """
+        Simulate time evolution of dynamic corridor transport.
+        
+        Args:
+            duration: Simulation duration (seconds)
+            time_steps: Number of time steps
+            
+        Returns:
+            Time evolution data
+        """
+        print(f"\n🚀 Simulating Dynamic Transport")
+        print(f"   Duration: {duration:.1f} seconds")
+        print(f"   Time steps: {time_steps}")
+        print(f"   Mode: {self.config.corridor_mode}")
+        print("-" * 50)
+        
+        # Time array
+        times = np.linspace(0, duration, time_steps)
+        
+        # Evolution data
+        evolution = {
+            'times': times,
+            'velocities': [],
+            'energies': [],
+            'field_strengths': [],
+            'transport_efficiency': []
+        }
+        
+        for i, t in enumerate(times):
+            # Current velocity
+            vs_t = self.v_s(t)
+            evolution['velocities'].append(vs_t)
+            
+            # Energy requirement at this time
+            energy_analysis = self.compute_total_energy_requirement(duration, 75.0)
+            # Adjust for current velocity (simple scaling)
+            velocity_factor = (vs_t / self.config.v_conveyor_max) if self.config.v_conveyor_max > 0 else 1.0
+            current_energy = energy_analysis['E_final'] * (1 + velocity_factor**2)
+            evolution['energies'].append(current_energy)
+            
+            # Field strength at corridor center
+            rho_center = (self.R_ext + self.R_int) / 2
+            z_center = self.L / 2
+            field_strength = abs(self.stress_energy_density(rho_center, z_center, t))
+            evolution['field_strengths'].append(field_strength)
+            
+            # Transport efficiency (inverse of energy)
+            efficiency = 1.0 / current_energy if current_energy > 0 else 0.0
+            evolution['transport_efficiency'].append(efficiency)
+            
+            if i % (time_steps // 10) == 0:
+                print(f"  t = {t:5.2f}s: v = {vs_t:8.2e} m/s, E = {current_energy:.2e} J")
+        
+        # Calculate transport metrics
+        avg_velocity = np.mean(np.abs(evolution['velocities']))
+        avg_energy = np.mean(evolution['energies'])
+        energy_variation = np.std(evolution['energies']) / avg_energy if avg_energy > 0 else 0.0
+        
+        transport_metrics = {
+            'average_velocity': avg_velocity,
+            'average_energy': avg_energy,
+            'energy_variation_coefficient': energy_variation,
+            'peak_velocity': np.max(np.abs(evolution['velocities'])),
+            'peak_energy': np.max(evolution['energies']),
+            'transport_distance': self.L,
+            'effective_transport_time': duration
+        }
+        
+        print(f"\n📊 Transport Metrics:")
+        print(f"  Average velocity: {avg_velocity:.2e} m/s")
+        print(f"  Average energy: {avg_energy:.2e} J")
+        print(f"  Energy variation: {energy_variation*100:.1f}%")
+        print(f"  Peak velocity: {transport_metrics['peak_velocity']:.2e} m/s")
+        
+        return {
+            'evolution': evolution,
+            'metrics': transport_metrics,
+            'configuration': {
+                'corridor_mode': self.config.corridor_mode,
+                'duration': duration,
+                'time_steps': time_steps,
+                'corridor_length': self.L
+            }
+        }
 
 def main():
     """Main demonstration of enhanced stargate transporter."""
