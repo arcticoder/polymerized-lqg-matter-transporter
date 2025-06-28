@@ -25,6 +25,7 @@ Date: June 28, 2025
 import jax
 import jax.numpy as jnp
 from jax import jit, grad
+from functools import partial
 import numpy as np
 from typing import Dict, Tuple, Optional
 from dataclasses import dataclass
@@ -142,7 +143,7 @@ class SMEEinsteinSolver:
         
         return k
     
-    @jit
+    @partial(jit, static_argnums=(0,))
     def compute_ricci_scalar_gradients(self, metric: jnp.ndarray) -> jnp.ndarray:
         """
         Compute second derivatives of Ricci scalar for SME corrections.
@@ -170,7 +171,7 @@ class SMEEinsteinSolver:
         
         return d2R
     
-    @jit
+    @partial(jit, static_argnums=(0,))
     def compute_sme_correction(self, metric: jnp.ndarray, ricci_tensor: jnp.ndarray, 
                                ricci_scalar: float) -> jnp.ndarray:
         """
@@ -199,7 +200,7 @@ class SMEEinsteinSolver:
         
         return term1 + term2 + term3
     
-    @jit
+    @partial(jit, static_argnums=(0,))
     def compute_G_LV(self, metric: jnp.ndarray) -> jnp.ndarray:
         """
         Compute SME-enhanced Einstein tensor G_μν^LV.

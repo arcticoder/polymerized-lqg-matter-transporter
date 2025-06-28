@@ -32,6 +32,7 @@ Date: June 28, 2025
 import jax
 import jax.numpy as jnp
 from jax import jit, vmap
+from functools import partial
 import numpy as np
 from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass
@@ -109,7 +110,7 @@ class PolynomialDispersionRelations:
         print(f"  LV scale: {parameters.E_lv:.2e} GeV")
         print(f"  Experimental bounds: {'✅' if parameters.validate_experimental_bounds() else '❌'}")
     
-    @jit
+    @partial(jit, static_argnums=(0,))
     def lv_dispersion(self, p: jnp.ndarray, m: float) -> jnp.ndarray:
         """
         Compute LV-corrected dispersion relation.
@@ -149,7 +150,7 @@ class PolynomialDispersionRelations:
         
         return jnp.sqrt(E_squared)
     
-    @jit
+    @partial(jit, static_argnums=(0,))
     def classical_dispersion(self, p: jnp.ndarray, m: float) -> jnp.ndarray:
         """
         Classical Einstein dispersion relation for comparison.
@@ -165,7 +166,7 @@ class PolynomialDispersionRelations:
         """
         return jnp.sqrt(p**2 + m**2)
     
-    @jit
+    @partial(jit, static_argnums=(0,))
     def enhancement_factor(self, p: jnp.ndarray, m: float) -> jnp.ndarray:
         """
         Compute enhancement factor: E_LV / E_classical.
@@ -182,7 +183,7 @@ class PolynomialDispersionRelations:
         
         return E_lv / E_classical
     
-    @jit
+    @partial(jit, static_argnums=(0,))
     def group_velocity(self, p: jnp.ndarray, m: float) -> jnp.ndarray:
         """
         Compute group velocity: v_g = dE/dp.
