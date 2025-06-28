@@ -1,0 +1,22 @@
+{
+  "R_payload": 2.5,
+  "R_neck": 0.025,
+  "L_corridor": 75.0,
+  "delta_wall": 0.015,
+  "v_conveyor": 0.0,
+  "v_conveyor_max": 1000000.0,
+  "corridor_mode": "static",
+  "use_van_den_broeck": true,
+  "use_temporal_smearing": true,
+  "use_multi_bubble": true,
+  "temporal_scale": 2400.0,
+  "mu_polymer": 0.12,
+  "alpha_polymer": 1.8,
+  "sinc_correction": true,
+  "surface_tension": 5e-16,
+  "junction_precision": 1e-12,
+  "transparency_coupling": 5e-09,
+  "bio_safety_threshold": 5e-16,
+  "quantum_coherence_preservation": true,
+  "emergency_response_time": 5e-05
+}
