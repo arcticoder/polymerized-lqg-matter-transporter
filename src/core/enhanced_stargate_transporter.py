@@ -7,6 +7,8 @@ incorporating advanced techniques from:
 - lqg-anec-framework: Van den Broeck geometry & temporal smearing
 - unified-lqg: Polymer corrections & quantum geometry
 - negative-energy-generator: Sustained ANEC violations
+- unified-lqg-qft: Polymer quantization and LQG field equations
+- elemental-transmutator: Casimir effect negative energy generation
 
 Mathematical Improvements:
 1. Van den Broeck volume-reduction geometry (10^5-10^6× energy reduction)
@@ -14,9 +16,13 @@ Mathematical Improvements:
 3. Temporal smearing for T^-4 energy scaling
 4. Multi-bubble superposition techniques
 5. Advanced junction condition formalism
+6. LQG polymer quantization: p_poly = (ℏ/μ) sin(μ p / ℏ)
+7. Casimir effect integration: ρ = -π²ℏc/(720 a⁴) 
+8. Time-dependent resonance: v_s(t) = V_max sin(π t / T_period)
 
 Author: Enhanced from user specifications and repository survey
 Created: June 27, 2025
+Updated: June 28, 2025 - Added LQG polymer corrections and advanced physics
 """
 
 import numpy as np
@@ -27,6 +33,20 @@ from dataclasses import dataclass
 import scipy.optimize
 from scipy.special import sinc
 import warnings
+
+# Import new physics modules
+try:
+    from ..utils.polymer_correction import PolymerCorrection
+    from ..utils.casimir_effect import CasimirGenerator, CasimirConfig
+    from ..utils.temporal_smearing import TemporalSmearing, TemporalConfig
+    from ..dynamics.resonance import TimeDependentResonance, ResonanceConfig
+except ImportError:
+    # Fallback for testing
+    warnings.warn("Could not import new physics modules - some features disabled")
+    PolymerCorrection = None
+    CasimirGenerator = None
+    TemporalSmearing = None
+    TimeDependentResonance = None
 
 @dataclass
 class EnhancedTransporterConfig:
@@ -49,20 +69,33 @@ class EnhancedTransporterConfig:
     use_multi_bubble: bool = True          # Multi-bubble superposition
     temporal_scale: float = 3600.0         # Temporal smearing scale (s)
     
-    # Polymer-LQG enhancements
-    mu_polymer: float = 0.1               # LQG polymer parameter
-    alpha_polymer: float = 1.2            # Polymer enhancement factor
-    sinc_correction: bool = True          # Apply sinc corrections
+    # LQG Polymer Corrections (NEW)
+    use_polymer_corrections: bool = True   # Enable LQG polymer quantization
+    mu_polymer: float = 1e-4              # Polymer scale parameter
     
-    # Junction conditions (enhanced from existing implementation)
-    surface_tension: float = 1e-15        # Ultra-low surface tension
-    junction_precision: float = 1e-12     # Matching precision
-    transparency_coupling: float = 1e-8   # Object-boundary coupling
+    # Casimir Effect Parameters (NEW)
+    use_casimir_enhancement: bool = True   # Enable Casimir negative energy
+    casimir_plate_separation: float = 1e-6 # Plate separation (m)
+    casimir_num_plates: int = 100         # Number of plates in array
     
-    # Safety parameters (medical-grade)
-    bio_safety_threshold: float = 1e-12   # Biological impact threshold
-    quantum_coherence_preservation: bool = True
-    emergency_response_time: float = 1e-3  # Emergency shutdown time (s)
+    # Temporal Smearing Parameters (NEW)
+    T_reference: float = 300.0            # Reference temperature (K)
+    T_operating: float = 77.0             # Operating temperature (K, LN2)
+    temporal_exponent: float = 4.0        # Temperature scaling exponent
+    
+    # Time-Dependent Resonance (NEW)
+    use_resonance: bool = True            # Enable time-dependent resonance
+    resonance_v_max: float = 1e6          # Maximum resonance velocity (m/s)
+    resonance_period: float = 3600.0      # Resonance period (s)
+    resonance_modes: List[int] = None     # Harmonic modes
+    
+    # Payload parameters
+    payload_mass: float = 1.0             # kg
+    target_distance: float = 1e9          # Transport distance (m)
+    
+    def __post_init__(self):
+        if self.resonance_modes is None:
+            self.resonance_modes = [1, 2, 3]  # Default harmonic modes
 
 class EnhancedStargateTransporter:
     """
@@ -72,6 +105,9 @@ class EnhancedStargateTransporter:
     - Enhanced Israel-Darmois junction conditions
     - Temporal smearing energy optimization
     - Medical-grade safety protocols
+    - LQG polymer quantization corrections
+    - Casimir effect negative energy generation
+    - Time-dependent resonance enhancement
     """
     
     def __init__(self, config: EnhancedTransporterConfig):
@@ -88,21 +124,115 @@ class EnhancedStargateTransporter:
         self.R_ext = config.R_neck     # Exterior thin neck
         self.L = config.L_corridor     # Corridor length
         
-        # Energy reduction factors (from survey)
+        # Initialize new physics modules
+        self._initialize_physics_modules()
+        
+        # Energy reduction factors (from survey + new modules)
         self.R_geometric = 1e-5 if config.use_van_den_broeck else 1.0
-        self.R_polymer = config.alpha_polymer if config.use_multi_bubble else 1.0
+        self.R_polymer = self._compute_polymer_reduction() if config.use_polymer_corrections else 1.0
         self.R_multi_bubble = 2.0 if config.use_multi_bubble else 1.0
+        self.R_casimir = self._compute_casimir_reduction() if config.use_casimir_enhancement else 1.0
+        self.R_temporal = self._compute_temporal_reduction() if config.use_temporal_smearing else 1.0
+        self.R_resonance = self._compute_resonance_enhancement() if config.use_resonance else 1.0
         
         print(f"Enhanced Stargate Transporter Initialized:")
         print(f"  Geometry: R_payload={self.R_int:.1f}m, R_neck={self.R_ext:.2f}m")
         print(f"  Corridor length: {self.L:.1f}m")
-        print(f"  Energy reduction: {self.total_energy_reduction():.1e}×")
-        print(f"  Safety threshold: {config.bio_safety_threshold:.1e}")
+        print(f"  Energy reduction factors:")
+        print(f"    Geometric (VdB): {self.R_geometric:.1e}×")
+        print(f"    Polymer (LQG): {self.R_polymer:.1e}×")
+        print(f"    Casimir: {self.R_casimir:.1e}×")
+        print(f"    Temporal: {self.R_temporal:.1f}×")
+        print(f"    Resonance: {self.R_resonance:.1f}×")
+        print(f"  Total reduction: {self.total_energy_reduction():.1e}×")
+        print(f"  Safety threshold: {getattr(config, 'bio_safety_threshold', 1e-12):.1e}")
+    
+    def _initialize_physics_modules(self):
+        """Initialize the new physics modules with configuration parameters."""
+        
+        # Polymer correction module
+        if self.config.use_polymer_corrections and PolymerCorrection:
+            self.polymer = PolymerCorrection(self.config.mu_polymer)
+        else:
+            self.polymer = None
+        
+        # Casimir effect module
+        if self.config.use_casimir_enhancement and CasimirGenerator:
+            casimir_config = CasimirConfig(
+                plate_separation=self.config.casimir_plate_separation,
+                num_plates=self.config.casimir_num_plates,
+                V_neck=(4/3) * np.pi * self.config.R_neck**3
+            )
+            self.casimir = CasimirGenerator(casimir_config)
+        else:
+            self.casimir = None
+        
+        # Temporal smearing module
+        if self.config.use_temporal_smearing and TemporalSmearing:
+            temporal_config = TemporalConfig(
+                T_ref=self.config.T_reference,
+                T_operating=self.config.T_operating,
+                scaling_exponent=self.config.temporal_exponent
+            )
+            self.temporal = TemporalSmearing(temporal_config)
+        else:
+            self.temporal = None
+        
+        # Time-dependent resonance module
+        if self.config.use_resonance and TimeDependentResonance:
+            resonance_config = ResonanceConfig(
+                v_max=self.config.resonance_v_max,
+                T_period=self.config.resonance_period,
+                resonance_modes=self.config.resonance_modes
+            )
+            self.resonance = TimeDependentResonance(resonance_config)
+        else:
+            self.resonance = None
+    
+    def _compute_polymer_reduction(self) -> float:
+        """Compute LQG polymer reduction factor."""
+        if not self.polymer:
+            return 1.0
+        
+        # Use characteristic momentum scale for matter transport
+        p_characteristic = self.config.payload_mass * self.config.v_conveyor_max
+        if p_characteristic == 0:
+            p_characteristic = 1e-20  # Minimum momentum scale
+        
+        R_poly = float(self.polymer.R_polymer(jnp.array([p_characteristic])))
+        return R_poly
+    
+    def _compute_casimir_reduction(self) -> float:
+        """Compute Casimir effect reduction factor."""
+        if not self.casimir:
+            return 1.0
+        
+        R_cas = self.casimir.R_casimir(self.config.payload_mass)
+        return max(R_cas, 1e-15)  # Prevent numerical issues
+    
+    def _compute_temporal_reduction(self) -> float:
+        """Compute temporal smearing reduction factor."""
+        if not self.temporal:
+            return 1.0
+        
+        R_temp = self.temporal.R_temporal(self.config.T_operating)
+        return R_temp
+    
+    def _compute_resonance_enhancement(self) -> float:
+        """Compute time-dependent resonance enhancement."""
+        if not self.resonance:
+            return 1.0
+        
+        # Estimate field frequency from transport parameters
+        field_frequency = self.config.v_conveyor_max / self.config.target_distance
+        enhancement = self.resonance.resonance_enhancement_factor(field_frequency)
+        return enhancement
         
     def total_energy_reduction(self) -> float:
         """Calculate total energy reduction factor from all enhancements."""
-        return self.R_geometric * self.R_polymer * self.R_multi_bubble
-        
+        return (self.R_geometric * self.R_polymer * self.R_multi_bubble * 
+                self.R_casimir * self.R_temporal * self.R_resonance)
+    
     def van_den_broeck_shape_function(self, rho: float, z: float) -> float:
         """
         Enhanced Van den Broeck shape function with cylindrical geometry.
