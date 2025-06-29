@@ -1,0 +1,69 @@
+{
+  "transport_fusion_coupling": {
+    "polymer_consistency_error": 0.003199999999999731,
+    "energy_balance_ratio": 58760.49627774092,
+    "coupling_enhancement": 1.0536117501182773,
+    "transport_mu": 0.1,
+    "fusion_mu_derived": 0.10031999999999998,
+    "transport_energy_req_mj": 15.700303068227731,
+    "fusion_energy_available_mj": 922557.5999999999,
+    "stability_metric": 1.7018235190100968e-05,
+    "validation_status": {
+      "polymer_consistency": true,
+      "energy_balance": false,
+      "coupling_stability": true,
+      "overall_stable": false
+    }
+  },
+  "polymer_consistency": {
+    "optimal_mu": 0.05,
+    "max_consistency": 1.2748505223236606,
+    "parameter_sensitivity": 0.15883076925672307,
+    "mu_range_tested": [
+      0.05,
+      0.5
+    ],
+    "consistency_variation": 0.16540588154368038,
+    "recommended_mu": 0.05
+  },
+  "backreaction_stability": {
+    "max_deviation_percent": 1.3952173913043415,
+    "mean_deviation_percent": 0.5818357487922706,
+    "stability_factor": 0.9942152999648423,
+    "backreaction_range": [
+      1.9173500754045065,
+      1.971453045227524
+    ],
+    "parameter_robustness": true,
+    "exact_beta": 1.9443254780147017
+  },
+  "energy_balance": {
+    "nominal_energy_margin": 49946.42183607978,
+    "min_balance_ratio": 33297.61455738652,
+    "balance_stability": 0.36228591005983424,
+    "transport_requirement_mj": 15.700303068227731,
+    "fusion_available_mj": 784173.9599999998,
+    "energy_positive": true,
+    "load_range_stable": true
+  },
+  "qi_coupling": {
+    "transport_qi_bound": -257514161979.12283,
+    "fusion_qi_bound": -49741.88368183837,
+    "coupled_qi_bound": 1921128409576762.8,
+    "transport_margin": 2.5751416197912282e+26,
+    "fusion_margin": 4.974188368183837e+19,
+    "coupled_margin": 1.9211284095767627e+30,
+    "coupling_stability": 7460.282552275756,
+    "qi_coupling_stable": true
+  },
+  "overall_assessment": {
+    "system_stable": false,
+    "stability_score": 0.75,
+    "critical_issues": [
+      "Transport-fusion coupling instability"
+    ],
+    "recommendations": [
+      "Adjust polymer parameter to \u03bc=0.1\u00b10.02"
+    ]
+  }
+}
