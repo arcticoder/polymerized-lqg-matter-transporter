@@ -5,16 +5,12 @@
 			"path": "."
 		},
 		{
-			"name": "warp-field-coils",
-			"path": "../warp-field-coils"
+			"name": "elemental-transmutator",
+			"path": "../elemental-transmutator"
 		},
 		{
-			"name": "unified-lqg",
-			"path": "../unified-lqg"
-		},
-		{
-			"name": "unified-lqg-qft",
-			"path": "../unified-lqg-qft"
+			"name": "energy",
+			"path": "../energy"
 		},
 		{
 			"name": "lorentz-violation-pipeline",
@@ -27,6 +23,26 @@
 		{
 			"name": "negative-energy-generator",
 			"path": "../negative-energy-generator"
+		},
+		{
+			"name": "su2-3nj-closedform",
+			"path": "../su2-3nj-closedform"
+		},
+		{
+			"name": "su2-3nj-generating-functional",
+			"path": "../su2-3nj-generating-functional"
+		},
+		{
+			"name": "su2-node-matrix-elements",
+			"path": "../su2-node-matrix-elements"
+		},
+		{
+			"name": "unified-lqg",
+			"path": "../unified-lqg"
+		},
+		{
+			"name": "unified-lqg-qft",
+			"path": "../unified-lqg-qft"
 		},
 		{
 			"name": "warp-bubble-einstein-equations",
@@ -45,20 +61,8 @@
 			"path": "../warp-bubble-qft"
 		},
 		{
-			"name": "elemental-transmutator",
-			"path": "../elemental-transmutator"
-		},
-		{
-			"name": "su2-3nj-closedform",
-			"path": "../su2-3nj-closedform"
-		},
-		{
-			"name": "su2-3nj-generating-functional",
-			"path": "../su2-3nj-generating-functional"
-		},
-		{
-			"name": "su2-node-matrix-elements",
-			"path": "../su2-node-matrix-elements"
+			"name": "warp-field-coils",
+			"path": "../warp-field-coils"
 		}
 	],
 	"settings": {
