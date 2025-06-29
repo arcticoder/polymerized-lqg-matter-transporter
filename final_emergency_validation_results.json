@@ -1,0 +1,12 @@
+{
+  "validation_score": 33.33333333333333,
+  "overall_status": "FAIL",
+  "energy_balance_ratio": 1056.594469521678,
+  "total_reduction_factor": 118537344004.85529,
+  "stable": false,
+  "realistic": false,
+  "fusion_output_gj": 0.802224,
+  "transport_requirement_gj": 0.0007592544,
+  "geometric_reduction": 1e-08,
+  "safety_margin": 0.05
+}

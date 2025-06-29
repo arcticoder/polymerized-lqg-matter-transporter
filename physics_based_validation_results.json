@@ -1,0 +1,13 @@
+{
+  "validation_score": 66.66666666666666,
+  "overall_status": "FAIL",
+  "physics_based": true,
+  "speculative_enhancements_removed": true,
+  "energy_balance_ratio": 0.006400055143178402,
+  "enhancement_factor": 2.815726021298321,
+  "stable": false,
+  "feasible": false,
+  "realistic": true,
+  "fusion_available_gj": 2.272968,
+  "transport_target_gj": 355.14818999999994
+}
