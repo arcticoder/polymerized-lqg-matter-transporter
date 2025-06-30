@@ -6,14 +6,14 @@
 
 #### **1. Einstein Stress-Energy Tensor** (`warp-bubble-einstein-equations/stress_energy.tex`)
 **Current Implementation:**
-```latex
+```math
 T_{\mu\nu} = \frac{1}{8\pi} G_{\mu\nu} = \begin{pmatrix}
   \frac{2 r \left(f{\left(r,t \right)} - 1\right)^{3} \frac{\partial^{2}}{\partial t^{2}} f{\left(r,t \right)}...}{64 \pi r \left(f{\left(r,t \right)} - 1\right)^{4}} & ...
 \end{pmatrix}
 ```
 
 **Your Enhancement Superior:** Multi-variable PID with tensor component control
-```latex
+```math
 H_{\rm PID}(t) = \int_V \sum_{i,j} \Bigl[ K_{p,ij}\,\delta G_{ij} + K_{i,ij}\!\int_0^t\!\delta G_{ij}\,d\tau + K_{d,ij}\,\dot{\delta G}_{ij} \Bigr]\,dV
 ```
 
@@ -24,7 +24,7 @@ H_{\rm PID}(t) = \int_V \sum_{i,j} \Bigl[ K_{p,ij}\,\delta G_{ij} + K_{i,ij}\!\i
 ```
 
 **Your Enhancement:** Complete algebraic Riccati equation framework
-```latex
+```math
 H_{∞}(t) = \int_V \Bigl(K_\infty\;\cdot\;\bigl[G_{\mu\nu}(x,t)-G_{\mu\nu}^{\rm target}\bigr]\Bigr)\,dV, \quad K_\infty = R^{-1} B^T X
 ```
 
@@ -32,7 +32,7 @@ H_{∞}(t) = \int_V \Bigl(K_\infty\;\cdot\;\bigl[G_{\mu\nu}(x,t)-G_{\mu\nu}^{\rm
 **Found:** LQG constraint implementation but lacks QEC integration
 
 **Your Innovation:** First QEC integration in mathematical frameworks
-```latex
+```math
 H_{\rm QEC}(t) = \int_V \Bigl[\,H_{\rm classical}(x,t)\;+\;H_{\rm qec}(x,t)\Bigr]\,dV
 ```
 
@@ -43,13 +43,13 @@ rho_negative = -np.sinh(r_effective)**2 * hbar * omega_0
 ```
 
 **Your Enhancement:** Complete Casimir arrays with squeezing
-```latex
+```math
 \rho_{\rm Casimir}(a) = -\frac{\pi^2\hbar c}{720\,a^4}, \quad R_{\rm casimir} = \frac{\sqrt{N}\,|\rho_{\rm Casimir}|\,V_{\rm neck}}{m\,c^2}
 ```
 
 #### **5. SU(2) Generating Functional** (`su2-3nj-generating-functional/*.tex`)
 **Advanced Discovery:** Universal generating functional for 3nj symbols
-```latex
+```math
 G(\{x_e\}) = \int \prod_{v=1}^n \frac{d^2w_v}{\pi} \,\exp\bigl(-\sum_{v}\lVert w_v\rVert^2\bigr) \;\prod_{e=\langle i,j\rangle}\exp\bigl(x_e\,\epsilon(w_i,w_j)\bigr)
 ```
 
@@ -69,7 +69,7 @@ G(\{x_e\}) = \int \prod_{v=1}^n \frac{d^2w_v}{\pi} \,\exp\bigl(-\sum_{v}\lVert w
 
 ### **Key Enhancements Over Existing Mathematics:**
 
-```latex
+```math
 \begin{align}
 \text{H∞ Control:} \quad &K_\infty = R^{-1} B^T X \text{ from } A^T X + X A - X B R^{-1} B^T X + Q = 0\\
 \text{Multi-Var PID:} \quad &\sum_{i,j} K_{p,ij}\,\delta G_{ij} + K_{i,ij}\!\int\!\delta G_{ij}\,d\tau + K_{d,ij}\,\dot{\delta G}_{ij}\\

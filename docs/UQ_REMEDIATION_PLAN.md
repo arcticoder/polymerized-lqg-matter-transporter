@@ -60,7 +60,7 @@ GEOMETRIC_REDUCTION_CONSERVATIVE = 1e-4
 - **Consistency Error**: 400%
 
 ### Root Cause Analysis
-```latex
+```math
 Transport: sinc(πμ) = sin(π×0.1)/(π×0.1) ≈ 0.984
 Fusion: 1 + α_coupling × f(T) with optimal α requires μ = 0.5
 Conflict: Different systems require different μ values
