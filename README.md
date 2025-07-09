@@ -1,5 +1,15 @@
 # 🌀 Polymerized LQG Matter Transporter Supporting FTL Technology
 
+## Related Repositories
+
+- [energy](https://github.com/arcticoder/energy): Central meta-repo for all energy, quantum, and matter transport research. This transporter is integrated for comprehensive matter manipulation.
+- [lqg-ftl-metric-engineering](https://github.com/arcticoder/lqg-ftl-metric-engineering): Primary integration providing zero-exotic-energy matter transport for FTL spacecraft systems.
+- [unified-lqg](https://github.com/arcticoder/unified-lqg): Supplies LQG polymer-corrected transport framework and quantum geometry foundation.
+- [negative-energy-generator](https://github.com/arcticoder/negative-energy-generator): Provides energy source for matter transport with 484× energy enhancement.
+- [artificial-gravity-field-generator](https://github.com/arcticoder/artificial-gravity-field-generator): Integrates for safety-critical matter transport operations with gravity field control.
+
+All repositories are part of the [arcticoder](https://github.com/arcticoder) ecosystem and link back to the energy framework for unified documentation and integration.
+
 ## Overview
 
 The Polymerized LQG Matter Transporter provides **critical matter manipulation capabilities** supporting the LQG FTL Metric Engineering framework through **zero exotic energy matter transport** with **24.2 billion× energy enhancement**. Enhanced with comprehensive multi-field superposition enabling simultaneous operation of multiple overlapping warp fields within quantum geometric shells.
