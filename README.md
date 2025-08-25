@@ -1,4 +1,4 @@
-# 🌀 Polymerized LQG Matter Transporter Supporting FTL Technology
+# 🌀 Polymerized LQG Matter Transporter (research-stage)
 
 ## Related Repositories
 
@@ -12,15 +12,15 @@ All repositories are part of the [arcticoder](https://github.com/arcticoder) eco
 
 ## Overview
 
-The Polymerized LQG Matter Transporter provides **critical matter manipulation capabilities** supporting the LQG FTL Metric Engineering framework through **zero exotic energy matter transport** with **24.2 billion× energy enhancement**. Enhanced with comprehensive multi-field superposition enabling simultaneous operation of multiple overlapping warp fields within quantum geometric shells.
+This repository describes a research-stage polymerized LQG approach to matter transport. Descriptions below summarize model-based results and design concepts; they are not production-ready specifications. Where numerical values are given (e.g. enhancement factors or parameter choices) they arise from specific model configurations and assumptions described in the referenced methods and docs. Readers should consult the referenced validation artifacts for reproducibility and uncertainty quantification.
 
 ## LQG FTL Metric Engineering Integration 🚀
 
-### Matter Transport Support for FTL Technology
-- **Zero Exotic Energy Transport**: Matter manipulation without exotic matter through LQG polymer corrections
-- **FTL-Compatible Operations**: Matter transport supporting faster-than-light spacecraft systems
-- **Production-Ready Validation**: 0.043% conservation accuracy for practical FTL deployment
-- **Cross-Repository Integration**: Seamless compatibility with lqg-ftl-metric-engineering framework
+### Matter Transport Support (research-stage)
+- **Model-based zero-exotic-energy transport**: Proposed schemes use polymer-corrected LQG models that, under the model assumptions, do not require exotic stress-energy distributions. These are model-derived results and require further V&V before operational claims can be made.
+- **FTL-compatibility (theoretical integration)**: Concepts here show how matter transport could integrate with FTL metric-engineering in the model; this is not a demonstrated technology for deployment.
+- **Validation status**: Reported conservation metrics are from simulation/analysis runs under specified assumptions. See `docs/` for benchmark data, scripts, and uncertainty estimates.
+- **Cross-repository integration**: Integration examples show interoperability with `lqg-ftl-metric-engineering` at the code and interface level; integration requires further verification for experimental or operational contexts.
 
 ### Enhanced Quantum Geometric Foundation
 - **Polymer-Corrected Transport**: Matter manipulation through LQG quantum geometry with β = 1.9443254780147017
@@ -28,7 +28,20 @@ The Polymerized LQG Matter Transporter provides **critical matter manipulation c
 - **Multi-Field FTL Support**: Simultaneous warp drive, transport, and structural integrity field operation
 - **Real-Time Control**: Adaptive feedback for dynamic FTL spacecraft applications
 
-## 🚀 Enhanced Features
+## 🔬 Research Scope, Validation & Limitations
+
+This repository documents research artifacts, models, and prototype software. Important notes:
+
+- **Research-stage artifacts**: Code and numerical examples are intended for research and reproducibility. They should not be construed as validated hardware designs or operational procedures.
+- **Model assumptions**: Many performance numbers depend on specific model parameters and boundary conditions. See `docs/methods.md` and `docs/assumptions.md` for full details.
+- **Uncertainty & reproducibility**: Where we report metrics (e.g., energy factors, conservation errors) we aim to provide scripts and raw outputs in `docs/benchmarks/`. These should be used to reproduce and better quantify uncertainty.
+- **Safety & compliance**: Any experimental work that could have safety, legal, or export-control implications must follow institutional review and compliance procedures; the repository does not provide operational safety approvals.
+
+For contributors: when making claims about performance or feasibility, please include: the exact configuration used, the scripts to reproduce results, and a short uncertainty note (e.g., sensitivity to grid resolution or parameter ranges).
+
+---
+
+## 🚀 Enhanced Features (condensed)
 
 ### Multi-Field Superposition Framework
 - **N-Field Superposition**: Simultaneous operation of up to 8 overlapping warp fields
